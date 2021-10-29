@@ -9,7 +9,7 @@ router.get('/ping', (req, res) => {
     res.json({pong: true})
 })
 
-router.get('/stats', UserController.getStates);
+router.get('/states', UserController.getStates);
 
 router.post('/user/signin', AuthController.signin);
 router.post('/user/signup', AuthController.signup);
