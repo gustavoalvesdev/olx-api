@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt');
+const mongoose = require('mongoose');
 const { validationResult, matchedData } = require('express-validator');
 const State = require('../models/State');
 const User = require('../models/User');
@@ -58,6 +60,25 @@ module.exports = {
             }
 
             updates.email = data.email;
+        }
+
+        if (data.state) {
+            if (mongoose.Types.ObjectId.isValid(data.state)) {
+                const stateCheck = await State.findById(data.state);
+    
+                if (!stateCheck) {
+                    res.json({error: 'Estado não existe'});
+                    return;
+                }
+                updates.state = data.state;
+            } else {
+                res.json({error: 'Código de estado inválido!'});
+                return;
+            }
+        }
+
+        if (data.password) {
+            updates.passwordHash = await bcrypt.hash(data.password, 10);
         }
 
         await User.findOneAndUpdate({token: data.token}, {$set: updates});
